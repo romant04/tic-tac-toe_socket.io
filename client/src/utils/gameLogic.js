@@ -1,3 +1,11 @@
+export function isValid(target) {
+    if (target === "") {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 export function isWinner(board, player) {
     // Check rows
     if (board[0] === player && board[1] === player && board[2] === player) return true;
