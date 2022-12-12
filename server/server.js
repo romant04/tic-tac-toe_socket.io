@@ -18,10 +18,6 @@ let games = []
 let players = []
 
 io.on('connection', (socket) => {
-  if (socket.handshake.query.id) {
-    socket.join(socket.handshake.query.id)
-  }
-
   socket.on('join', (name) => {
     players.push({ id: socket.id, name: name })
     const opponent = players.find((player) => player.id !== socket.id)
@@ -56,18 +52,27 @@ io.on('connection', (socket) => {
   })
 
   socket.on('play', (currentBoard) => {
-    console.log('socket: ' + socket.handshake.query.id)
-    let game = games.find((game) =>
-      game.players.some((x) => x.id == socket.handshake.query.id),
-    )
+    console.log('socket: ' + socket.id)
+    let game = games.find((game) => game.players.some((x) => x.id == socket.id))
 
     games.map((x) => {
       console.log(x.players)
     })
 
-    const opponent = game.players.find((x) => x.id != socket.handshake.query.id)
+    const opponent = game.players.find((x) => x.id != socket.id)
 
     io.to(opponent.id).emit('played', currentBoard)
+  })
+
+  socket.once('disconnect', () => {
+    let game = games.find((game) => game.players.some((x) => x.id == socket.id))
+
+    if (game) {
+      const opponent = game.players.find((x) => x.id != socket.id)
+      io.to(opponent.id).emit('left')
+
+      games = games.filter((x) => x != game)
+    }
   })
 })
 

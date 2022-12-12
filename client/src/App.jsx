@@ -1,17 +1,20 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Game from "./pages/Game";
-import Join from "./pages/Join";
-import "./styles/main.css";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import Game from './pages/Game'
+import Join from './pages/Join'
+import io from 'socket.io-client'
+import './styles/main.css'
 
 function App() {
-    return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<Join />} />
-                <Route path="/game" element={<Game />} />
-            </Routes>
-        </Router>
-    );
+  const socket = io('http://localhost:5000')
+
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Join socket={socket} />} />
+        <Route path="/game" element={<Game socket={socket} />} />
+      </Routes>
+    </Router>
+  )
 }
 
-export default App;
+export default App

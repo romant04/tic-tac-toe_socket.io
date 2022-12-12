@@ -1,12 +1,10 @@
 import { Button, Stack, TextField, Typography } from '@mui/material'
 import React from 'react'
 import { useState } from 'react'
-import io from 'socket.io-client'
 import { useNavigate } from 'react-router-dom'
 
-function Join() {
+function Join({ socket }) {
   const navigate = useNavigate()
-  const socket = io('http://localhost:5000')
   const [name, setName] = useState('')
   const [error, setError] = useState(false)
 
@@ -24,7 +22,6 @@ function Join() {
         symbol: data[1],
         opponentName: data[0],
         myName: name,
-        id: data[2],
       },
     })
   })

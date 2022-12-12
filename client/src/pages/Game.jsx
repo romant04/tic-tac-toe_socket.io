@@ -2,11 +2,10 @@ import React from 'react'
 import { Grid, Container, useTheme, Typography, Stack } from '@mui/material'
 import { isValid, isWinner } from '../utils/gameLogic'
 import { useState } from 'react'
-import io from 'socket.io-client'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 
-function Game() {
+function Game({ socket }) {
   const navigate = useNavigate()
   const theme = useTheme()
 
@@ -17,13 +16,7 @@ function Game() {
   )
 
   const { state } = useLocation()
-  const { symbol, opponentName, myName, id } = state
-
-  const socket = io('http://localhost:5000', {
-    query: {
-      id: id,
-    },
-  })
+  const { symbol, opponentName, myName } = state
 
   const YOU = symbol
   const [yourTurn, setYourTurn] = useState(symbol == 'X' ? true : false)
@@ -31,6 +24,11 @@ function Game() {
   socket.on('played', (board) => {
     setCurrentBoard(board)
     setYourTurn(true)
+  })
+
+  socket.on('left', () => {
+    alert('Your opponent left, you will be redirected')
+    navigate('/')
   })
 
   useEffect(() => {
