@@ -8,6 +8,11 @@ import { useEffect } from 'react'
 function Game({ socket }) {
   const navigate = useNavigate()
   const theme = useTheme()
+  const [left, setLeft] = useState(false)
+  const [redirectTime, setRedirectTime] = useState(2)
+  /* TODO: persist game data when page refressh */
+  /* TODO: change the win alert to winning screen,  */
+
 
   const [currentBoard, setCurrentBoard] = useState(
     Array.from(Array(9), () => {
@@ -27,8 +32,20 @@ function Game({ socket }) {
   })
 
   socket.on('left', () => {
-    alert('Your opponent left, you will be redirected')
-    navigate('/')
+    /* Show text message */
+    setLeft(true)
+
+    /* Changes redirect time and then redirect to home page */
+    setTimeout(() => {
+      setRedirectTime(2)
+    }, 999)
+    setTimeout(() => {
+      setRedirectTime(1)
+    }, 1999)
+    setTimeout(() => {
+      setRedirectTime(0)
+      navigate("/")
+    }, 3000)
   })
 
   useEffect(() => {
@@ -128,6 +145,7 @@ function Game({ socket }) {
             )
           })}
         </Grid>
+        {left && <Typography color="warning.main">You will be redirected in {redirectTime}</Typography>}
       </Container>
     </>
   )
