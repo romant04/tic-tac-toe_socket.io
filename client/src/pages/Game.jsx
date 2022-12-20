@@ -11,8 +11,6 @@ function Game({ socket }) {
   const [left, setLeft] = useState(false)
   const [redirectTime, setRedirectTime] = useState(2)
   /* TODO: persist game data when page refressh */
-  /* TODO: change the win alert to winning screen,  */
-
 
   const [currentBoard, setCurrentBoard] = useState(
     Array.from(Array(9), () => {
@@ -44,16 +42,25 @@ function Game({ socket }) {
     }, 1999)
     setTimeout(() => {
       setRedirectTime(0)
-      navigate("/")
+      navigate('/')
     }, 3000)
   })
 
-  useEffect(() => {
-    if (isWinner(currentBoard, YOU)) {
-      alert('YOU ARE THE WINNER!!')
-    } else if (isWinner(currentBoard, YOU == 'X' ? 'O' : 'X')) {
-      alert('YOU LOST :(')
+  const isEnd = () => {
+    if (
+      isWinner(currentBoard, YOU) ||
+      isWinner(currentBoard, YOU === 'X' ? 'O' : 'X')
+    ) {
+      setTimeout(() => {
+        navigate('/gameover', {
+          state: { win: isWinner(currentBoard, YOU) },
+        })
+      }, 500)
     }
+  }
+
+  useEffect(() => {
+    isEnd()
   }, [currentBoard])
 
   return (
@@ -69,11 +76,25 @@ function Game({ socket }) {
           mt: 5,
         }}
       >
-        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+        <Typography
+          variant="h5"
+          sx={{ fontWeight: 'bold', textAlign: 'center' }}
+        >
           {myName}
+          <br />
+          <Typography variant="body1" color="success.main">
+            ({YOU})
+          </Typography>
         </Typography>
-        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+        <Typography
+          variant="h5"
+          sx={{ fontWeight: 'bold', textAlign: 'center' }}
+        >
           {opponentName}
+          <br />
+          <Typography variant="body1" color="error.main">
+            ({YOU == 'X' ? 'O' : 'X'})
+          </Typography>
         </Typography>
       </Stack>
       <Container
@@ -108,13 +129,9 @@ function Game({ socket }) {
                     e.target.children[0].innerText = YOU
                     let newBoard = currentBoard
                     newBoard[e.target.id] = YOU
-                    setCurrentBoard(newBoard)
-                    if (isWinner(currentBoard, YOU)) {
-                      alert('YOU ARE THE WINNER!!')
-                    } else if (isWinner(currentBoard, YOU == 'X' ? 'O' : 'X')) {
-                      alert('YOU LOST :(')
-                    }
                     socket.emit('play', newBoard)
+                    setCurrentBoard(newBoard)
+                    isEnd()
                     setYourTurn(false)
                   }
                 }}
@@ -145,7 +162,20 @@ function Game({ socket }) {
             )
           })}
         </Grid>
-        {left && <Typography color="warning.main">You will be redirected in {redirectTime}</Typography>}
+        {left && (
+          <>
+            <Typography
+              color="error.main"
+              variant="body1"
+              sx={{ mt: 3, fontWeight: 'bold' }}
+            >
+              Your oppoent left
+            </Typography>
+            <Typography variant="body2" color="error.main" sx={{ mt: 0.5 }}>
+              You will be redirected in {redirectTime}
+            </Typography>
+          </>
+        )}
       </Container>
     </>
   )

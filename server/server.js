@@ -18,15 +18,15 @@ let games = []
 let players = []
 
 io.on('connection', (socket) => {
+  console.log(socket.id)
   socket.on('join', (name) => {
     players.push({ id: socket.id, name: name })
     const opponent = players.find((player) => player.id !== socket.id)
+    console.log(players)
     if (opponent) {
       players = players.filter(
         (player) => player.id !== opponent.id && player.id !== socket.id,
       )
-      console.log(`GAME FOUND ${opponent.name} ${name}`)
-      console.log(players)
 
       const random = Math.round(Math.random())
 
@@ -44,15 +44,10 @@ io.on('connection', (socket) => {
       games.push({
         players: [{ id: socket.id, name: name }, opponent],
       })
-
-      games.map((x) => {
-        console.log(x.players)
-      })
     }
   })
 
   socket.on('play', (currentBoard) => {
-    console.log('socket: ' + socket.id)
     let game = games.find((game) => game.players.some((x) => x.id == socket.id))
 
     games.map((x) => {
@@ -65,10 +60,12 @@ io.on('connection', (socket) => {
   })
 
   socket.once('disconnect', () => {
-    let game = games.find((game) => game.players.some((x) => x.id == socket.id))
+    console.log("disconnected " + socket.id)
+    players = players.filter((x) => x.id !== socket.id)
+    const game = games.find((game) => game.players.some((x) => x.id === socket.id))
 
     if (game) {
-      const opponent = game.players.find((x) => x.id != socket.id)
+      const opponent = game.players.find((x) => x.id !== socket.id)
       io.to(opponent.id).emit('left')
 
       games = games.filter((x) => x != game)

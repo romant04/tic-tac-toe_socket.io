@@ -1,4 +1,10 @@
-import { Button, Stack, TextField, Typography } from '@mui/material'
+import {
+  Button,
+  CircularProgress,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material'
 import React from 'react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -7,10 +13,13 @@ function Join({ socket }) {
   const navigate = useNavigate()
   const [name, setName] = useState('')
   const [error, setError] = useState(false)
+  const [searched, setSearched] = useState(false)
 
   const handleSubmit = () => {
     if (name !== '') {
       socket.emit('join', name)
+
+      setSearched(true)
     } else {
       setError(true)
     }
@@ -43,11 +52,24 @@ function Join({ socket }) {
           label="Name"
           variant="outlined"
         />
-        <Button sx={{ mt: 1 }} variant="contained" onClick={handleSubmit}>
-          Confirm
+        <Button
+          sx={{
+            mt: 1,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          variant="contained"
+          onClick={handleSubmit}
+        >
+          {searched ? (
+            <CircularProgress size={25} sx={{ color: 'white' }} />
+          ) : (
+            <Typography>Confirm</Typography>
+          )}
         </Button>
         {error && (
-          <Typography color="warning.main" sx={{ textAlign: 'center', mt: 2 }}>
+          <Typography color="error.main" sx={{ textAlign: 'center', mt: 2 }}>
             ERROR: Name must be filled
           </Typography>
         )}
