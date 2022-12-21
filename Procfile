@@ -1,1 +1,1 @@
-web: node server/server.js && cd client && npm run build
+web: node server/server.js && npm run build --prefix client
