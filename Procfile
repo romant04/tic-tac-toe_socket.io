@@ -1,1 +1,1 @@
-web: node server/server.js && npm run build --prefix client
+web: npm install && node server/server.js && npm run build --prefix client
