@@ -6,7 +6,7 @@ export function isValid(target) {
   }
 }
 
-export function isWinner(board, player) {
+const isWin = (board, player) => {
   // Check rows
   if (board[0] === player && board[1] === player && board[2] === player)
     return true
@@ -28,8 +28,11 @@ export function isWinner(board, player) {
     return true
   if (board[2] === player && board[4] === player && board[6] === player)
     return true
+}
+
+export function isWinner(board, player) {
   // Check draw
-  else if (
+  if (
     board[0] !== '' &&
     board[1] !== '' &&
     board[2] !== '' &&
@@ -39,9 +42,11 @@ export function isWinner(board, player) {
     board[6] !== '' &&
     board[7] !== '' &&
     board[8] !== '' &&
-    isWinner(board, player === 'X' ? 'O' : 'X') !== true
-  )
+    isWin(board, player) === false &&
+    isWin(board, player === 'X' ? 'O' : 'X') === false
+  ) {
     return 'draw'
-
-  return false
+  } else {
+    return isWin(board, player)
+  }
 }
