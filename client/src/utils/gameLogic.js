@@ -39,7 +39,7 @@ export function isWinner(board, player) {
     board[6] !== '' &&
     board[7] !== '' &&
     board[8] !== '' &&
-    !isWinner(player === 'X' ? 'O' : 'X')
+    isWinner(player === 'X' ? 'O' : 'X') !== true
   )
     return 'draw'
 
