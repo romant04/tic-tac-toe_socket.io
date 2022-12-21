@@ -30,10 +30,15 @@ export function Gameover() {
         variant="h3"
         sx={{
           textAlign: 'center',
-          color: win ? theme.palette.success.main : theme.palette.error.main,
+          color:
+            win === 'draw'
+              ? theme.palette.info.main
+              : win === true
+              ? theme.palette.success.main
+              : theme.palette.error.main,
         }}
       >
-        {win ? 'You win' : ' You lose'}
+        {win === 'draw' ? 'Draw' : win === true ? 'You win' : 'You lost'}
       </Typography>
       <Button sx={{ mt: 3 }} onClick={handleReturn} variant="contained">
         Return to main menu

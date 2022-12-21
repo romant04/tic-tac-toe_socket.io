@@ -7,6 +7,12 @@ const server = http.createServer(app)
 
 const PORT = process.env.PORT || 5000
 
+app.use(express.static(path.join(__dirname, '../client/build')))
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/build', 'index.html'))
+})
+
 const io = require('socket.io')(server, {
   cors: {
     origin: '*',
@@ -32,12 +38,12 @@ io.on('connection', (socket) => {
 
       io.to(opponent.id).emit('found', [
         name,
-        random == 1 ? 'X' : 'O',
+        random === 1 ? 'X' : 'O',
         opponent.id,
       ])
       io.to(socket.id).emit('found', [
         opponent.name,
-        random == 0 ? 'X' : 'O',
+        random === 0 ? 'X' : 'O',
         socket.id,
       ])
 
@@ -48,7 +54,9 @@ io.on('connection', (socket) => {
   })
 
   socket.on('play', (currentBoard) => {
-    let game = games.find((game) => game.players.some((x) => x.id == socket.id))
+    let game = games.find((game) =>
+      game.players.some((x) => x.id === socket.id),
+    )
 
     games.map((x) => {
       console.log(x.players)
@@ -60,9 +68,11 @@ io.on('connection', (socket) => {
   })
 
   socket.once('disconnect', () => {
-    console.log("disconnected " + socket.id)
+    console.log('disconnected ' + socket.id)
     players = players.filter((x) => x.id !== socket.id)
-    const game = games.find((game) => game.players.some((x) => x.id === socket.id))
+    const game = games.find((game) =>
+      game.players.some((x) => x.id === socket.id),
+    )
 
     if (game) {
       const opponent = game.players.find((x) => x.id !== socket.id)

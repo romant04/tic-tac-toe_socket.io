@@ -93,7 +93,7 @@ function Game({ socket }) {
           {opponentName}
           <br />
           <Typography variant="body1" color="error.main">
-            ({YOU == 'X' ? 'O' : 'X'})
+            ({YOU === 'X' ? 'O' : 'X'})
           </Typography>
         </Typography>
       </Stack>
