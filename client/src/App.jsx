@@ -6,7 +6,7 @@ import io from 'socket.io-client'
 import './styles/main.css'
 
 function App() {
-  const socket = io('https://tarnai-tic-tac.onrender.com')
+  const socket = io('https://tic-tac-toe-39pp.onrender.com/')
 
   return (
     <Router>
